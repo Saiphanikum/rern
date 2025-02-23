@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>Welcome, {{ current_user.username }}!</h1>
+                <p class="mb-0">Track your recycling progress and impact</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <h3>Total Points: {{ current_user.points }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <i class="fas fa-recycle fa-2x text-primary"></i>
+            <h4>Items Recycled</h4>
+            <div class="stat-value">{{ items|length }}</div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: {{ (items|length / 100) * 100 }}%"></div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fas fa-star fa-2x text-warning"></i>
+            <h4>Points Earned</h4>
+            <div class="stat-value">{{ current_user.points }}</div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: {{ (current_user.points / 1000) * 100 }}%"></div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <i class="fas fa-tree fa-2x text-success"></i>
+            <h4>Environmental Impact</h4>
+            <div class="stat-value">{{ (items|length * 0.5)|round(1) }}kg</div>
+            <p>CO₂ Saved</p>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="recent-activities">
+        <h3><i class="fas fa-history"></i> Recent Activities</h3>
+        {% for item in items|reverse %}
+        <div class="history-item">
+            <img src="{{ url_for('static', filename=item.image_path) }}" class="item-image" alt="Recycled item">
+            <div class="activity-details">
+                <h5>{{ item.category|title }}</h5>
+                <p class="mb-0">
+                    {% if item.status == 'approved' %}
+                    <span class="badge badge-recyclable">
+                        <i class="fas fa-check"></i> Recyclable
+                    </span>
+                    {% else %}
+                    <span class="badge badge-non-recyclable">
+                        <i class="fas fa-times"></i> Non-Recyclable
+                    </span>
+                    {% endif %}
+                    <span class="activity-time">
+                        {% if item.timestamp %}
+                            {{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            No date
+                        {% endif %}
+                    </span>
+                </p>
+            </div>
+            <div class="points text-end">
+                {% if item.points > 0 %}
+                <span class="badge bg-success">+{{ item.points }} points</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Floating Upload Button -->
+    <a href="{{ url_for('upload') }}" class="upload-button">
+        <i class="fas fa-plus fa-lg"></i>
+    </a>
+</div>
+{% endblock %} 

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="upload-container">
+    <div class="upload-card">
+        <div class="upload-header">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Upload Recyclable Item</h2>
+            <p>Drop your image here or click to browse</p>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-slide">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-zone" id="dropZone">
+                <input type="file" name="image" id="fileInput" accept="image/*" class="file-input" required>
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <span class="primary-text">Drag & Drop your image here</span>
+                        <span class="secondary-text">or</span>
+                        <button type="button" class="browse-btn">Browse Files</button>
+                    </div>
+                    <div class="upload-preview" id="imagePreview">
+                        <img src="" alt="Preview" id="previewImage">
+                        <div class="preview-overlay">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-actions">
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Upload and Classify</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                </button>
+            </div>
+        </form>
+        
+        <div class="upload-info">
+            <div class="info-card">
+                <i class="fas fa-info-circle"></i>
+                <h4>Supported Formats</h4>
+                <p>JPG, PNG, JPEG (Max 5MB)</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-camera"></i>
+                <h4>Image Tips</h4>
+                <p>Clear, well-lit photos work best</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImage = document.getElementById('previewImage');
+    const uploadForm = document.getElementById('uploadForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Handle drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        handleFile(file);
+    });
+    
+    // Handle file selection
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        handleFile(file);
+    });
+    
+    // Handle file preview
+    function handleFile(file) {
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                imagePreview.style.display = 'block';
+                dropZone.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // Handle form submission
+    uploadForm.addEventListener('submit', () => {
+        submitBtn.classList.add('loading');
+    });
+});
+</script>
+{% endblock %} 

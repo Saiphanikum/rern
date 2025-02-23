@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h2>Create Account</h2>
+            <p>Join our recycling community</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-animated">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form class="register-form" method="POST" action="{{ url_for('register') }}">
+            <div class="form-floating mb-3">
+                <input type="text" 
+                       class="form-control input-animated" 
+                       id="username" 
+                       name="username" 
+                       placeholder="Username"
+                       required>
+                <label for="username">
+                    <i class="fas fa-user"></i> Username
+                </label>
+                <div class="input-focus-effect"></div>
+            </div>
+            
+            <div class="form-floating mb-3">
+                <input type="email" 
+                       class="form-control input-animated" 
+                       id="email" 
+                       name="email" 
+                       placeholder="Email"
+                       required>
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <div class="input-focus-effect"></div>
+            </div>
+            
+            <div class="form-floating mb-4">
+                <input type="password" 
+                       class="form-control input-animated" 
+                       id="password" 
+                       name="password" 
+                       placeholder="Password"
+                       required>
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                <div class="input-focus-effect"></div>
+            </div>
+            
+            <button type="submit" class="register-btn btn-animated">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+            </button>
+        </form>
+        
+        <div class="text-center mt-4">
+            <p>Already have an account? 
+                <a href="{{ url_for('login') }}" class="link-animated">
+                    Sign in here
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

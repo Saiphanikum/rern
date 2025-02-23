@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result-container">
+    <div class="result-card animate-slide-up">
+        <div class="result-header {% if is_recyclable %}success-header{% else %}warning-header{% endif %} animate-fade-in">
+            <h2>
+                {% if is_recyclable %}
+                    <i class="fas fa-check-circle pulse"></i>
+                {% else %}
+                    <i class="fas fa-exclamation-circle shake"></i>
+                {% endif %}
+                Classification Result
+            </h2>
+        </div>
+        
+        <div class="result-body">
+            <!-- Image Section -->
+            <div class="image-section animate-fade-in">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename=item.image_path) }}" 
+                         class="result-image" 
+                         alt="Uploaded item">
+                    <div class="image-overlay">
+                        <div class="image-info">
+                            <small>{{ image_info.size }}, {{ image_info.format }}, {{ image_info.mode }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification Results -->
+            <div class="classification-section animate-slide-right">
+                <div class="category-badge {% if is_recyclable %}recyclable{% else %}non-recyclable{% endif %}">
+                    <span class="category-name">{{ category|title }}</span>
+                    <span class="confidence-score">
+                        {{ "%.2f"|format(confidence*100) }}% Confidence
+                    </span>
+                </div>
+
+                <!-- Top Predictions -->
+                <div class="predictions-container">
+                    <h4>Top Predictions</h4>
+                    <div class="prediction-bars">
+                        {% for pred in top_predictions %}
+                        <div class="prediction-bar animate-grow" 
+                             style="--confidence: {{ pred.confidence * 100 }}%">
+                            <span class="prediction-label">{{ pred.class|title }}</span>
+                            <div class="bar">
+                                <div class="bar-fill"></div>
+                            </div>
+                            <span class="prediction-value">{{ "%.2f"|format(pred.confidence*100) }}%</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if is_recyclable %}
+                <div class="success-section animate-fade-in">
+                    <div class="points-earned">
+                        <span class="points-icon">🏆</span>
+                        <span class="points-value">+{{ points }}</span>
+                        <span class="points-label">Points Earned!</span>
+                    </div>
+                    
+                    <div class="info-card animate-slide-up">
+                        <h4>About {{ category|title }}</h4>
+                        <p>{{ description }}</p>
+                    </div>
+
+                    <div class="instructions-card animate-slide-up">
+                        <h4>Recycling Instructions</h4>
+                        <ul class="instruction-list">
+                            {% for instruction in instructions %}
+                            <li class="instruction-item animate-slide-right" style="--delay: {{ loop.index * 0.1 }}s">
+                                <i class="fas fa-check-circle"></i>
+                                {{ instruction }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="additional-info animate-slide-up">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <h5><i class="fas fa-recycle"></i> Examples</h5>
+                                <p>{{ examples }}</p>
+                            </div>
+                            <div class="info-item">
+                                <h5><i class="fas fa-leaf"></i> Environmental Impact</h5>
+                                <p>{{ environmental_impact }}</p>
+                            </div>
+                            <div class="info-item">
+                                <h5><i class="fas fa-cogs"></i> Processing Method</h5>
+                                <p>{{ processing_method }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="warning-section animate-fade-in">
+                    <div class="warning-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>This item is not recyclable. Please dispose of it properly.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="result-footer animate-slide-up">
+            <button onclick="window.location.href='{{ url_for('upload') }}'" 
+                    class="action-button primary">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Another
+            </button>
+            <button onclick="window.location.href='{{ url_for('dashboard') }}'" 
+                    class="action-button secondary">
+                <i class="fas fa-home"></i> Back to Dashboard
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %} 
